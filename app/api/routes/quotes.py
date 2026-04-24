@@ -2,11 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.services.crawler import crawl_top_categories
+from app.services import analysis
 
 from app import crud, schemas
 from app.database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix="",
+    tags=["Quotes"]
+)
 
 
 @router.post("/quotes", response_model=schemas.QuoteResponse)

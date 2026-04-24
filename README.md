@@ -1,51 +1,71 @@
 # Quotes Analytics System
 
-A full-stack web project that collects quotes from a public website, stores them in a database, provides CRUD API endpoints, and offers a simple analytics dashboard through Gradio.
+A full-stack web project that collects quotes from a public website, stores them in a database, provides REST API endpoints, and offers an analytics dashboard through Gradio.
 
 ## Project Overview
 
-This project was built to practice a real-world web development workflow in one system:
+This project was built to practice a real-world backend and data workflow in one system:
 
 - web crawling
 - database storage
 - RESTful API development
+- data analysis
 - UI integration
-- basic text analytics
-- cloud deployment
+- Docker deployment
 
-The application collects quotes from **quotes.toscrape.com**, stores them in **SQLite**, manages them with **FastAPI**, and visualizes them with **Gradio**.
+The application collects quotes from **quotes.toscrape.com**, stores them in **SQLite**, manages them with **FastAPI**, and visualizes analytics with **Gradio**.
 
 ---
 
 ## Main Features
 
 ### 1. Web Crawling
+
 - Crawls quotes from `quotes.toscrape.com`
-- Extracts quote text, author, and category(tag)
+- Extracts quote text, author, and category
 - Selects categories based on website tags
-- Tries to collect up to **20 quotes per category**
+- Tries to collect up to 20 quotes per category
+- Saves crawled data into the database
 
 ### 2. Database Storage
-- Stores crawled data in **SQLite**
-- Uses a `quotes` table with:
-  - `id`
-  - `text`
-  - `author`
-  - `category`
+
+The project uses **SQLite** with SQLAlchemy ORM.
+
+Main table: `quotes`
+
+Fields:
+
+- `id`
+- `text`
+- `author`
+- `category`
 
 ### 3. REST API with FastAPI
-Implements full CRUD operations:
+
+The backend provides CRUD endpoints for quote management.
+
+#### Quotes API
 
 - `POST /quotes` → create a quote
 - `GET /quotes` → get all quotes
 - `GET /quotes/{quote_id}` → get one quote
 - `PUT /quotes/{quote_id}` → update a quote
 - `DELETE /quotes/{quote_id}` → delete a quote
+
+#### Crawler API
+
 - `POST /crawl` → crawl and store quotes automatically
+
+#### Analytics API
+
+- `GET /analytics/summary` → get total quotes, authors, and categories
+- `GET /analytics/top-authors` → get top authors
+- `GET /analytics/categories` → get category counts
+- `GET /analytics/word-count` → get most common words
 
 ### 4. Gradio UI
 
-Mounted inside FastAPI as an integrated service.
+Gradio is mounted inside the FastAPI application.
 
 Available at:
 
@@ -96,7 +116,9 @@ fastapi-quotes-analytics/
 │
 ├── app/
 │   ├── api/
-│   │   └── routes.py
+│   │   └── routes/
+│   │             ├── analys.py
+│   │             └── quotes.py
 │   ├── services/
 │   │   ├── crawler.py
 │   │   └── analysis.py
@@ -131,17 +153,29 @@ Data Pipeline
 ---
 
 ### API Endpoints
+- Root
+| Method | Endpoint | Description   |
+| ------ | -------- | ------------- |
+| GET    | `/`      | Root endpoint |
 
-| Method | Endpoint             | Description           |
-| ------ | -------------------- | --------------------- |
-| GET    | `/`                  | Root endpoint         |
-| POST   | `/quotes`            | Create a new quote    |
-| GET    | `/quotes`            | Get all quotes        |
-| GET    | `/quotes/{quote_id}` | Get quote by ID       |
-| PUT    | `/quotes/{quote_id}` | Update a quote        |
-| DELETE | `/quotes/{quote_id}` | Delete a quote        |
-| POST   | `/crawl`             | Crawl and save quotes |
+- Quotes
 
+| Method | Endpoint             | Description        |
+| ------ | -------------------- | ------------------ |
+| POST   | `/quotes`            | Create a new quote |
+| GET    | `/quotes`            | Get all quotes     |
+| GET    | `/quotes/{quote_id}` | Get quote by ID    |
+| PUT    | `/quotes/{quote_id}` | Update a quote     |
+| DELETE | `/quotes/{quote_id}` | Delete a quote     |
+
+- Analytics
+
+| Method | Endpoint                 | Description            |
+| ------ | ------------------------ | ---------------------- |
+| GET    | `/analytics/summary`     | Get summary statistics |
+| GET    | `/analytics/top-authors` | Get top authors        |
+| GET    | `/analytics/categories`  | Get category counts    |
+| GET    | `/analytics/word-count`  | Get word frequency     |
 
 ---
 
